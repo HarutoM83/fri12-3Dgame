@@ -18,6 +18,10 @@ public class Player : MonoBehaviour
         var moveVec = playerInput.actions["Move"].ReadValue<Vector2>();
 
         var cameraDir = playerInput.camera.transform.forward;
+
+        cameraDir.y = 0;
+        cameraDir = cameraDir.normalized;
+
         var cameraRight = playerInput.camera.transform.right;
 
         var moveVec3D =
