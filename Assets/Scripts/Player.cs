@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     PlayerInput playerInput;
     [SerializeField] float accel;
     [SerializeField] float rotateSpeed;
+    [SerializeField] float jumpSpeed;
     Rigidbody rb;
     Vector3 rotateTarget;
     Animator animator;
@@ -55,5 +56,11 @@ public class Player : MonoBehaviour
 
         // アニメーターのMoveSpeedパラメータに Rigidbody の移動速度の大きさを与える
         animator.SetFloat("MoveSpeed", rb.linearVelocity.magnitude);
+        // ジャンプ
+        if (playerInput.actions["Jump"].WasPressedThisFrame())
+        {
+            Vector3 jumpVec = new Vector3(0, jumpSpeed, 0);
+            rb.AddForce(jumpVec, ForceMode.VelocityChange);
+        }
     }
 }

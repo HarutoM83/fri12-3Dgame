@@ -21099,6 +21099,7 @@ MonoBehaviour:
   speedMax: 5
   accel: 50
   rotateSpeed: 20
+  jumpSpeed: 20
 --- !u!4 &1533009040 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1327674205686831306, guid: 83628a2e699576147adabb30587f44d4, type: 3}
