@@ -6,28 +6,54 @@ public class Player : MonoBehaviour
 {
     [SerializeField] float speedMax;
     PlayerInput playerInput;
+    [SerializeField] float accel;
+    [SerializeField] float rotateSpeed;
+    Rigidbody rb;
+    Vector3 rotateTarget;
+    Animator animator;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        var moveVec = playerInput.actions["Move"].ReadValue<Vector2>();
+        var accelVec = playerInput.actions["Move"].ReadValue<Vector2>();
 
         var cameraDir = playerInput.camera.transform.forward;
-
         cameraDir.y = 0;
         cameraDir = cameraDir.normalized;
 
         var cameraRight = playerInput.camera.transform.right;
 
-        var moveVec3D =
-            cameraDir * moveVec.y * speedMax
-            + cameraRight * moveVec.x * speedMax;
+        var accelVec3D =
+            cameraDir * accelVec.y * accel
+            + cameraRight * accelVec.x * accel;
+        rb.AddForce(accelVec3D, ForceMode.Acceleration);
 
-        transform.position = transform.position + moveVec3D * Time.deltaTime;
+        // プレイヤーの向きを変える
+        if (accelVec3D != Vector3.zero)
+        {
+            rotateTarget = accelVec3D.normalized;
+        }
+        transform.forward = rotateTarget;
+
+        // 前方向をコピーしておく
+        Vector3 forward = transform.forward;
+
+        // 上方向を固定
+        transform.up = Vector3.up;
+
+        // 前方向をターゲットに向かって補間
+        transform.forward =
+            Vector3.Slerp(forward, rotateTarget, rotateSpeed * Time.deltaTime);
+
+        // アニメーターのMoveSpeedパラメータに Rigidbody の移動速度の大きさを与える
+        animator.SetFloat("MoveSpeed", rb.linearVelocity.magnitude);
     }
 }
