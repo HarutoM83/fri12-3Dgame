@@ -5,20 +5,25 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [SerializeField] float speedMax;
-    PlayerInput playerInput;
     [SerializeField] float accel;
     [SerializeField] float rotateSpeed;
     [SerializeField] float jumpSpeed;
+    [SerializeField] float groundNormalYMin = 0.7f;
+    [SerializeField] float groundDamping = 8f;
+    [SerializeField] float airDamping = 0.5f;
+    [SerializeField] Animator animator;
+    PlayerInput playerInput;
     Rigidbody rb;
     Vector3 rotateTarget;
-    Animator animator;
+    bool isGrounded;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
-        animator = GetComponentInChildren<Animator>();
+        rb.sleepThreshold = -1;
     }
 
     // Update is called once per frame
@@ -59,10 +64,36 @@ public class Player : MonoBehaviour
         velocityXZ.y = 0;
         animator.SetFloat("MoveSpeed", velocityXZ.magnitude);
         // ジャンプ
-        if (playerInput.actions["Jump"].WasPressedThisFrame())
+        if (playerInput.actions["Jump"].WasPressedThisFrame()&&isGrounded)
         {
             Vector3 jumpVec = new Vector3(0, jumpSpeed, 0);
             rb.AddForce(jumpVec, ForceMode.VelocityChange);
+        }
+    }
+    private void FixedUpdate()
+    {
+        // 減衰を地上と空中で変える
+        if (isGrounded)
+        {
+            rb.linearDamping = groundDamping;
+        }
+        else
+        {
+            rb.linearDamping = airDamping;
+        }
+
+        // 物理計算中に接地判定を行うため、一旦ここで false にしておく
+        isGrounded = false;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        foreach (var contact in collision.contacts)
+        {
+            if (contact.normal.y >= groundNormalYMin)
+            {
+                isGrounded = true;
+            }
         }
     }
 }
