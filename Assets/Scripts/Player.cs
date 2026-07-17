@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject firePrefab;
     [SerializeField] float fireSpeed;
     [SerializeField] Vector3 fireOffset;
+    [SerializeField] int PlayerHP;
     PlayerInput playerInput;
     Rigidbody rb;
     Vector3 rotateTarget;
@@ -87,7 +88,6 @@ public class Player : MonoBehaviour
                 fireRB.linearVelocity = transform.forward * fireSpeed;
             }
         }
-
 
     }
     private void FixedUpdate()

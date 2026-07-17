@@ -76,7 +76,6 @@ public class Enemy : MonoBehaviour
             invincibleTime = invincibleTimeMax;
 
             if (hp <= 0)
-
             {
 
                 Destroy(gameObject);
