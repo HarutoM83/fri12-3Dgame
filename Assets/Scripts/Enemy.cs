@@ -4,6 +4,9 @@ using UnityEngine.UIElements;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 3;
+    [SerializeField] int hp = 2;
+    [SerializeField] float invincibleTimeMax = 0.5f;
+    [SerializeField] float knockbackSpeed = 5;
 
     Rigidbody rb;
     Vector3 rotateTarget;
@@ -25,6 +28,7 @@ public class Enemy : MonoBehaviour
         var direction = playerCollider.bounds.center - rb.position;
 
         bool isSeenPlayer = true;
+        //if (isSeenPlayer && invincibleTime <= 0)
         if (Physics.Raycast(rb.position, direction.normalized,
             out var hitInfo))
         {
@@ -44,5 +48,46 @@ public class Enemy : MonoBehaviour
 
         transform.forward =
             Vector3.Slerp(forward, rotateTarget, moveSpeed * Time.deltaTime);
+
+        if (invincibleTime > 0)
+        {
+            invincibleTime -= Time.deltaTime;
+        }
+    }
+
+
+    private void OnCollisionStay(Collision collision)
+    {
+        var attackObj = collision.gameObject.GetComponent<AttackObject>();
+        if (attackObj != null)
+        {
+            hp -= attackObj.power;
+            if (hp <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+        if (attackObj != null && invincibleTime <= 0)
+
+        {
+
+            hp -= attackObj.power;
+
+            invincibleTime = invincibleTimeMax;
+
+            if (hp <= 0)
+
+            {
+
+                Destroy(gameObject);
+
+            }
+
+        }
+        // ノックバック
+        var dir = transform.position - collision.transform.position;
+        dir.y = 0;
+        var knockbackVec = dir.normalized * knockbackSpeed;
+        rb.linearVelocity = knockbackVec;
     }
 }

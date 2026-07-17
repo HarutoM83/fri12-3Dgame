@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
     [SerializeField] float groundDamping = 8f;
     [SerializeField] float airDamping = 0.5f;
     [SerializeField] Animator animator;
+    [SerializeField] GameObject firePrefab;
+    [SerializeField] float fireSpeed;
+    [SerializeField] Vector3 fireOffset;
     PlayerInput playerInput;
     Rigidbody rb;
     Vector3 rotateTarget;
@@ -29,25 +32,28 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var accelVec = playerInput.actions["Move"].ReadValue<Vector2>();
-
-        var cameraDir = playerInput.camera.transform.forward;
-        cameraDir.y = 0;
-        cameraDir = cameraDir.normalized;
-
-        var cameraRight = playerInput.camera.transform.right;
-
-        var accelVec3D =
-            cameraDir * accelVec.y * accel
-            + cameraRight * accelVec.x * accel;
-        rb.AddForce(accelVec3D, ForceMode.Acceleration);
-
-        // プレイヤーの向きを変える
-        if (accelVec3D != Vector3.zero)
+        if (isGrounded)
         {
-            rotateTarget = accelVec3D.normalized;
+            var accelVec = playerInput.actions["Move"].ReadValue<Vector2>();
+
+            var cameraDir = playerInput.camera.transform.forward;
+            cameraDir.y = 0;
+            cameraDir = cameraDir.normalized;
+
+            var cameraRight = playerInput.camera.transform.right;
+
+            var accelVec3D =
+                cameraDir * accelVec.y * accel
+                + cameraRight * accelVec.x * accel;
+            rb.AddForce(accelVec3D, ForceMode.Acceleration);
+
+            // プレイヤーの向きを変える
+            if (accelVec3D != Vector3.zero)
+            {
+                rotateTarget = accelVec3D.normalized;
+            }
+            transform.forward = rotateTarget;
         }
-        transform.forward = rotateTarget;
 
         // 前方向をコピーしておく
         Vector3 forward = transform.forward;
@@ -69,6 +75,20 @@ public class Player : MonoBehaviour
             Vector3 jumpVec = new Vector3(0, jumpSpeed, 0);
             rb.AddForce(jumpVec, ForceMode.VelocityChange);
         }
+
+        // 攻撃
+        if (playerInput.actions["Attack"].WasPressedThisFrame())
+        {
+            var position = transform.position + transform.TransformVector(fireOffset);
+            var fireObj = Object.Instantiate(firePrefab, position, transform.rotation);
+            var fireRB = fireObj.GetComponent<Rigidbody>();
+            if (fireRB != null)
+            {
+                fireRB.linearVelocity = transform.forward * fireSpeed;
+            }
+        }
+
+
     }
     private void FixedUpdate()
     {
