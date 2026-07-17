@@ -15,7 +15,13 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject firePrefab;
     [SerializeField] float fireSpeed;
     [SerializeField] Vector3 fireOffset;
-    [SerializeField] int PlayerHP;
+    [SerializeField] int hp = 10;
+    [SerializeField] float invincibleTimeMax = 0.5f;
+    [SerializeField] float knockbackSpeed = 5;
+
+    float invincibleTime = 0;
+
+
     PlayerInput playerInput;
     Rigidbody rb;
     Vector3 rotateTarget;
@@ -88,7 +94,11 @@ public class Player : MonoBehaviour
                 fireRB.linearVelocity = transform.forward * fireSpeed;
             }
         }
-
+        // 無敵時間を減らす
+        if (invincibleTime > 0)
+        {
+            invincibleTime -= Time.deltaTime;
+        }
     }
     private void FixedUpdate()
     {
@@ -115,5 +125,25 @@ public class Player : MonoBehaviour
                 isGrounded = true;
             }
         }
+        var attackObj = collision.gameObject.GetComponent<AttackObject>();
+        if (attackObj != null && invincibleTime <= 0)
+        {
+            hp -= attackObj.power;
+            invincibleTime = invincibleTimeMax;
+            if (hp <= 0)
+            {
+                Destroy(gameObject);
+            }
+
+
+
+            // ノックバック
+            var dir = transform.position - collision.transform.position;
+            dir.y = 0;
+            var knockbackVec = dir.normalized * knockbackSpeed;
+            rb.AddForce(knockbackVec, ForceMode.VelocityChange);
+        }
+
+
     }
 }
