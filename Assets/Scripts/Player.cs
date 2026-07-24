@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,26 +6,23 @@ public class Player : MonoBehaviour
     [SerializeField] float speedMax;
     [SerializeField] float accel;
     [SerializeField] float rotateSpeed;
+    [SerializeField] Animator animator;
     [SerializeField] float jumpSpeed;
     [SerializeField] float groundNormalYMin = 0.7f;
     [SerializeField] float groundDamping = 8f;
     [SerializeField] float airDamping = 0.5f;
-    [SerializeField] Animator animator;
     [SerializeField] GameObject firePrefab;
     [SerializeField] float fireSpeed;
     [SerializeField] Vector3 fireOffset;
-    [SerializeField] int hp = 10;
+    public int hp = 10;
     [SerializeField] float invincibleTimeMax = 0.5f;
     [SerializeField] float knockbackSpeed = 5;
-
-    float invincibleTime = 0;
-
 
     PlayerInput playerInput;
     Rigidbody rb;
     Vector3 rotateTarget;
-    bool isGrounded;
-    
+    bool isGrounded = true;
+    float invincibleTime = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -34,6 +30,22 @@ public class Player : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
         rb.sleepThreshold = -1;
+    }
+
+    private void FixedUpdate()
+    {
+        // 減衰を地上と空中で変える
+        if (isGrounded)
+        {
+            rb.linearDamping = groundDamping;
+        }
+        else
+        {
+            rb.linearDamping = airDamping;
+        }
+
+        // 物理計算中に接地判定を行うため、一旦ここで false にしておく
+        isGrounded = false;
     }
 
     // Update is called once per frame
@@ -59,7 +71,6 @@ public class Player : MonoBehaviour
             {
                 rotateTarget = accelVec3D.normalized;
             }
-            transform.forward = rotateTarget;
         }
 
         // 前方向をコピーしておく
@@ -69,15 +80,20 @@ public class Player : MonoBehaviour
         transform.up = Vector3.up;
 
         // 前方向をターゲットに向かって補間
-        transform.forward =
-            Vector3.Slerp(forward, rotateTarget, rotateSpeed * Time.deltaTime);
+        var targetForward = Vector3.Slerp(forward, rotateTarget, rotateSpeed * Time.deltaTime);
+        if (targetForward != Vector3.zero)
+        {
+            transform.forward = targetForward;
+        }
 
         // アニメーターのMoveSpeedパラメータに Rigidbody の移動速度の大きさを与える
         Vector3 velocityXZ = rb.linearVelocity;
         velocityXZ.y = 0;
         animator.SetFloat("MoveSpeed", velocityXZ.magnitude);
+
         // ジャンプ
-        if (playerInput.actions["Jump"].WasPressedThisFrame()&&isGrounded)
+        if (playerInput.actions["Jump"].WasPressedThisFrame()
+            && isGrounded)
         {
             Vector3 jumpVec = new Vector3(0, jumpSpeed, 0);
             rb.AddForce(jumpVec, ForceMode.VelocityChange);
@@ -94,26 +110,13 @@ public class Player : MonoBehaviour
                 fireRB.linearVelocity = transform.forward * fireSpeed;
             }
         }
+
+
         // 無敵時間を減らす
         if (invincibleTime > 0)
         {
             invincibleTime -= Time.deltaTime;
         }
-    }
-    private void FixedUpdate()
-    {
-        // 減衰を地上と空中で変える
-        if (isGrounded)
-        {
-            rb.linearDamping = groundDamping;
-        }
-        else
-        {
-            rb.linearDamping = airDamping;
-        }
-
-        // 物理計算中に接地判定を行うため、一旦ここで false にしておく
-        isGrounded = false;
     }
 
     private void OnCollisionStay(Collision collision)
@@ -125,6 +128,7 @@ public class Player : MonoBehaviour
                 isGrounded = true;
             }
         }
+
         var attackObj = collision.gameObject.GetComponent<AttackObject>();
         if (attackObj != null && invincibleTime <= 0)
         {
@@ -135,15 +139,11 @@ public class Player : MonoBehaviour
                 Destroy(gameObject);
             }
 
-
-
             // ノックバック
             var dir = transform.position - collision.transform.position;
             dir.y = 0;
             var knockbackVec = dir.normalized * knockbackSpeed;
             rb.AddForce(knockbackVec, ForceMode.VelocityChange);
         }
-
-
     }
 }

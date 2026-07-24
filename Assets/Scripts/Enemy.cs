@@ -48,11 +48,12 @@ public class Enemy : MonoBehaviour
 
         transform.forward =
             Vector3.Slerp(forward, rotateTarget, moveSpeed * Time.deltaTime);
-
+        /*
         if (invincibleTime > 0)
         {
             invincibleTime -= Time.deltaTime;
         }
+        */
     }
 
 
@@ -67,6 +68,7 @@ public class Enemy : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        /*
         if (attackObj != null && invincibleTime <= 0)
 
         {
@@ -83,6 +85,7 @@ public class Enemy : MonoBehaviour
             }
 
         }
+        */
         // ノックバック
         var dir = transform.position - collision.transform.position;
         dir.y = 0;
