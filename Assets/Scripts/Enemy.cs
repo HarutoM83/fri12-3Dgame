@@ -57,7 +57,6 @@ public class Enemy : MonoBehaviour
         
     }
 
-
     private void OnCollisionStay(Collision collision)
     {
         var attackObj = collision.gameObject.GetComponent<AttackObject>();

@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using R3;               // R3 core
+using R3.Triggers;
 
 public class Player : MonoBehaviour
 {
@@ -14,7 +16,8 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject firePrefab;
     [SerializeField] float fireSpeed;
     [SerializeField] Vector3 fireOffset;
-    public int hp = 10;
+    public int maxhp = 10;
+    public ReactiveProperty<int> hp = new();
     [SerializeField] float invincibleTimeMax = 0.5f;
     [SerializeField] float knockbackSpeed = 5;
 
@@ -30,6 +33,7 @@ public class Player : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
         rb.sleepThreshold = -1;
+        hp.Value = maxhp;
     }
 
     private void FixedUpdate()
@@ -131,9 +135,9 @@ public class Player : MonoBehaviour
         var attackObj = collision.gameObject.GetComponent<AttackObject>();
         if (attackObj != null && invincibleTime <= 0)
         {
-            hp -= attackObj.power;
+            hp.Value -= attackObj.power;
             invincibleTime = invincibleTimeMax;
-            if (hp <= 0)
+            if (hp.Value <= 0)
             {
                 Destroy(gameObject);
             }
