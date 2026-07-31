@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float knockbackSpeed = 5;
 
     Rigidbody rb;
+    Animator animator;
     Vector3 rotateTarget;
     private float invincibleTime;
 
@@ -18,6 +19,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -65,6 +67,7 @@ public class Enemy : MonoBehaviour
             hp -= attackObj.power;
             if (hp <= 0)
             {
+                animator.SetTrigger("Die");
                 Destroy(gameObject);
             }
         }
@@ -77,6 +80,7 @@ public class Enemy : MonoBehaviour
 
             if (hp <= 0)
             {
+                animator.SetTrigger("Die");
                 Destroy(gameObject);
             }
         }
