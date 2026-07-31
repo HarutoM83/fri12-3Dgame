@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
 
     Rigidbody rb;
     Vector3 rotateTarget;
+    private float invincibleTime;
 
     public Collider playerCollider { get; set; }
     
@@ -28,7 +29,7 @@ public class Enemy : MonoBehaviour
         var direction = playerCollider.bounds.center - rb.position;
 
         bool isSeenPlayer = true;
-        //if (isSeenPlayer && invincibleTime <= 0)
+        if (isSeenPlayer && invincibleTime <= 0)
         if (Physics.Raycast(rb.position, direction.normalized,
             out var hitInfo))
         {
@@ -48,12 +49,12 @@ public class Enemy : MonoBehaviour
 
         transform.forward =
             Vector3.Slerp(forward, rotateTarget, moveSpeed * Time.deltaTime);
-        /*
+        
         if (invincibleTime > 0)
         {
             invincibleTime -= Time.deltaTime;
         }
-        */
+        
     }
 
 
@@ -68,24 +69,19 @@ public class Enemy : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        /*
+        
         if (attackObj != null && invincibleTime <= 0)
-
         {
-
             hp -= attackObj.power;
 
             invincibleTime = invincibleTimeMax;
 
             if (hp <= 0)
             {
-
                 Destroy(gameObject);
-
             }
-
         }
-        */
+        
         // ノックバック
         var dir = transform.position - collision.transform.position;
         dir.y = 0;
