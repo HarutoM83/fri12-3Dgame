@@ -18612,7 +18612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnPoint
   enemy: {fileID: 392097538}
-  spawnpoint: {fileID: 1470909629}
+  spawnpoint: {fileID: 35762310}
 --- !u!65 &1271343995
 BoxCollider:
   m_ObjectHideFlags: 0
