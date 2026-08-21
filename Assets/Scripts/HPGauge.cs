@@ -7,6 +7,7 @@ public class HPGauge : MonoBehaviour
 {
     [SerializeField] Player player;
     [SerializeField] Image hpgauge;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
