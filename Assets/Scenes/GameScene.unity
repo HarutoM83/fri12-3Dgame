@@ -659,7 +659,7 @@ GameObject:
   m_Component:
   - component: {fileID: 35762310}
   m_Layer: 0
-  m_Name: SpawnPoint
+  m_Name: SpawnPoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7583,7 +7583,7 @@ GameObject:
   - component: {fileID: 592805710}
   - component: {fileID: 592805711}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: TriggerSP1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18593,7 +18593,7 @@ GameObject:
   - component: {fileID: 1271343995}
   - component: {fileID: 1271343994}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: TriggerSP2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21612,7 +21612,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1470909629}
   m_Layer: 0
-  m_Name: SpawnPoint
+  m_Name: SpawnPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29207,6 +29207,7 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1136974507}
   - {fileID: 330585546}
+  - {fileID: 1559192919}
   - {fileID: 1533009036}
   - {fileID: 4262116798879143568}
   - {fileID: 593303725}
@@ -29221,10 +29222,9 @@ SceneRoots:
   - {fileID: 1997874604}
   - {fileID: 1548596272}
   - {fileID: 650992245}
-  - {fileID: 1787800122}
-  - {fileID: 1559192919}
   - {fileID: 1470909629}
   - {fileID: 35762310}
-  - {fileID: 1695751021}
   - {fileID: 592805709}
   - {fileID: 1271343996}
+  - {fileID: 1695751021}
+  - {fileID: 1787800122}
