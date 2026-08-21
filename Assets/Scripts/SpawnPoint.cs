@@ -9,6 +9,7 @@ public class SpawnPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
         Spawn();
     }
 
